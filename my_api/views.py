@@ -1,19 +1,21 @@
 
 import json
+from django.http import request
+from django.http.response import Http404
 from django.shortcuts import render
-from .models import Contributors, Projects, User
+from .models import Comments, Contributors, Issues, Projects, User
 from rest_framework import authentication, generics, permissions
 from rest_framework.response import Response
-from .serializers import UserSerializer, RegisterSerializer, ProjectSerializer
+from .serializers import CommentsSerializer, ContributorSerializer, IssuesSerializer, UserSerializer, RegisterSerializer, ProjectSerializer
 from rest_framework import viewsets
-from rest_framework_extensions.mixins import NestedViewSetMixin
-
+from .permissions import IsContributor, IsProjectAuthor,ComsPerm, IssuesPerm
+from .mixins import GetSerializerClassMixin
 
 # Create your views here.
 
 # Register User in API
 class RegisterAPI(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+    serializer_class=RegisterSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -24,37 +26,75 @@ class RegisterAPI(generics.GenericAPIView):
         })
         
 
-# Register User in API
-class UserViewSet(viewsets.ModelViewSet, NestedViewSetMixin):
+# User 
+class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     def get_queryset(self):
         
         return User.objects.all   
     
  
-        
-
 # Project 
-class ProjectViewSet(viewsets.ModelViewSet, NestedViewSetMixin):
+class ProjectViewSet(viewsets.ModelViewSet):
+    
     serializer_class = ProjectSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, IsProjectAuthor)
     
     def get_queryset(self):
         
-        
-        return Projects.objects.filter(author = self.request.user)
+        return Projects.objects.filter(contributors__user = self.request.user)|Projects.objects.filter(author= self.request.user)
     
-  
+ 
         
-# Contibutor
-class ContributorViewSet(viewsets.ModelViewSet, NestedViewSetMixin):
-    serializer_class = ProjectSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+# Contributor
+class ContributorViewSet(viewsets.ModelViewSet):
     
-    def get_queryset(self):
+    serializer_class = ContributorSerializer
+    permission_classes = (permissions.IsAuthenticated, IsContributor)
+    # serializer_action_classes = {
+    #     'destroy': ContributorSerializer,
+    #     'list': ContributorSerializer
         
-        return User.objects.all()
+    # }
 
+    def get_queryset(self):
+       
+        id = self.kwargs['project_pk']
+        return Projects.objects.get(pk=id).contributors
+        # project = [item.user for item in Contributors.objects.filter(project_id=id)]
+        # liste = []
+        # for i in project:
+        #     liste.append(int(i.id))
+        # liste.append(self.request.user.id)
+        # return Contributors.objects.all()
+     
+# Issues
+class IssuesViewSet(viewsets.ModelViewSet):
+    
+    serializer_class = IssuesSerializer
+    permission_classes = (permissions.IsAuthenticated,IssuesPerm)
+    
+    def get_queryset(self):
+        id = self.kwargs['project_pk']
+        return Issues.objects.filter(project_id=id)
+    
+# Comments
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    
+    serializer_class = CommentsSerializer
+    permission_classes = (permissions.IsAuthenticated, ComsPerm)
+    
+    def get_queryset(self):
+        id = self.kwargs['issue_pk']
+        return Issues.objects.get(pk=id).comments
+
+
+    
+    
+    
+   
+    
 
 
 
