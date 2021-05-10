@@ -16,6 +16,6 @@ Il est nécessaire d'avoir Python 3.7 et Git installé sur le PC.
 4. Installer l'environnement virtuel en éxécutant ``` python -m venv env ```
 5. Activer le avec la commande   ``` source env/Scripts/activate ```
 6. Installer les modules avec  ```pip install -r requirements.txt ```
-7.Créer la base de données en exécutant ``` python manage.py makemigrations ``` puis ``` python manage.py migrate ```
+7. Créer la base de données en exécutant ``` python manage.py makemigrations ``` puis ``` python manage.py migrate ```
 8. Lancez le serveur avec la commande ```python manage.py runserver```
 
