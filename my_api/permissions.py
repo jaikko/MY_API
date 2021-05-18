@@ -36,6 +36,10 @@ class IssuesPerm(permissions.BasePermission):
         id = view.kwargs.get('project_pk')
         if Contributors.objects.filter(user=request.user, project_id=id).exists():
             return True
+        if Projects.objects.filter(author=request.user, id=id).exists():
+            if request.method == 'POST':
+                return False
+            return True
         return False
 
     def has_object_permission(self, request, view, obj):
