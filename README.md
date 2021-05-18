@@ -20,4 +20,5 @@ Il est nécessaire d'avoir Python 3.7 et Git installé sur le PC.
 8. Lancez le serveur avec la commande ```python manage.py runserver```
 
 **Utilisation**
+
 L'API est accessible via cette url: http://127.0.0.1:8000. Par exemple, pour se s'inscrire, utuiliser http://127.0.0.1:8000/signup
