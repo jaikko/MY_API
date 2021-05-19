@@ -69,7 +69,6 @@ class ContributorSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         id = self.context.get('view').kwargs.get('project_pk')
         contri = Contributors.objects.create(role=validated_data['role'],
-                                             permission=validated_data['permission'],
                                              user_id=validated_data['user'].id, project_id=int(id))
 
         contri.save()
