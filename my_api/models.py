@@ -34,7 +34,6 @@ class Contributors(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contributors', null=True)
     project = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name='contributors', null=True)
     role = models.CharField(max_length=300)
-    
 
 
 class Issues(models.Model):
