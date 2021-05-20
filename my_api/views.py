@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from .serializers import CommentsSerializer, ContributorSerializer, IssuesSerializer, UserSerializer, RegisterSerializer, ProjectSerializer
 from rest_framework import viewsets
 from .permissions import IsContributor, IsProjectAuthor, ComsPerm, IssuesPerm
+from drf_multiple_serializer import ActionBaseSerializerMixin
 
 # Create your views here.
 
@@ -42,13 +43,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
 # Contributor
-class ContributorViewSet(viewsets.ModelViewSet):
-    serializer_class = ContributorSerializer
+class ContributorViewSet(ActionBaseSerializerMixin, viewsets.ModelViewSet):
+    serializer_classes = {
+        'default': ContributorSerializer,
+        'list': UserSerializer,
+    }
     permission_classes = (permissions.IsAuthenticated, IsContributor)
 
     def get_queryset(self):
         id = self.kwargs['project_pk']
-        return Projects.objects.get(pk=id).contributors
+        author = Projects.objects.get(pk=id)
+        contributors = [i.user.id for i in Contributors.objects.filter(project=id)]
+        return User.objects.filter(pk__in=contributors) | User.objects.filter(pk=author.author.id)
 
 
 # Issues
