@@ -54,7 +54,10 @@ class ContributorViewSet(ActionBaseSerializerMixin, viewsets.ModelViewSet):
         id = self.kwargs['project_pk']
         author = Projects.objects.get(pk=id)
         contributors = [i.user.id for i in Contributors.objects.filter(project=id)]
-        return User.objects.filter(pk__in=contributors) | User.objects.filter(pk=author.author.id)
+        if self.request.method == 'DELETE':
+            return Projects.objects.get(pk=id).contributors
+        else:
+            return User.objects.filter(pk__in=contributors) | User.objects.filter(pk=author.author.id)
 
 
 # Issues
