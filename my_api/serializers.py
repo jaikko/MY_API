@@ -1,8 +1,5 @@
 from .models import Comments, Issues, Projects, User, Contributors
-from rest_framework import permissions, response, serializers
-from django.contrib.auth import get_user_model
-from drf_nested_resources.fields import HyperlinkedNestedModelSerializer
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework import serializers
 
 
 # User Serializer
