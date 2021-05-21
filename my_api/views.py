@@ -1,5 +1,5 @@
-from .models import Comments, Contributors, Issues, Projects, User
-from rest_framework import authentication, generics, permissions
+from .models import Contributors, Issues, Projects, User
+from rest_framework import generics, permissions
 from rest_framework.response import Response
 from .serializers import CommentsSerializer, ContributorSerializer, IssuesSerializer, UserSerializer, RegisterSerializer, ProjectSerializer
 from rest_framework import viewsets
@@ -18,14 +18,6 @@ class RegisterAPI(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response({"user": UserSerializer(user, context=self.get_serializer_context()).data})
-
-
-# User
-class UserViewSet(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
-
-    def get_queryset(self):
-        return User.objects.all
 
 
 # Project
