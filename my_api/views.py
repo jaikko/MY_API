@@ -1,8 +1,3 @@
-
-import json
-from django.http import request
-from django.http.response import Http404
-from django.shortcuts import render
 from .models import Comments, Contributors, Issues, Projects, User
 from rest_framework import authentication, generics, permissions
 from rest_framework.response import Response
